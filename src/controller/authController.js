@@ -14,6 +14,7 @@ const {
 
 const { mobileOtp } = require("../utils/mobileOtpSend");
 const bcrypt = require("bcryptjs");
+const errorResponseHandler = require("../utils/errorResponseHandler");
 
 exports.signup = async (req, res) => {
   try {
@@ -35,7 +36,7 @@ exports.signup = async (req, res) => {
     const PasswordHash = await hashPasswordFunc(password);
     const isUserExist = await findUserById({ email, userName });
     if (isUserExist) {
-      res.status(400).json({ message: "User already exist by user name" });
+     return res.status(400).json({ message: "User already exist by user name" });
     }
 
     const Id = uuid();
@@ -82,34 +83,34 @@ exports.signup = async (req, res) => {
       TanentId: null,
     };
     await userRoleSet(roleData);
-    res.status(200).json({ message: "Signup success" });
+   return res.status(200).json({ message: "Signup success" });
   } catch (err) {
-    console.error("Error in signup controller:", err);
-    throw err;
+    errorResponseHandler(res, err);
   }
 };
 
 const otpCache = {};
 
 exports.generateOtp = async (req, res) => {
-  const { userName } = req.body;
-  const user = await findUserById({ userName });
-  if (!user) {
-    return res.status(400).json({ message: "Invalid user name" });
+  try {
+    const { userName } = req.body;
+    const user = await findUserById({ userName });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid user name" });
+    }
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    otpCache[userName] = { otp, timestamp: Date.now() + 300000 };
+    await mobileOtp({ userName, otp });
+
+    res.status(200).json({ otp, message: "OTP sent successfully" });
+  } catch (error) {
+    errorResponseHandler(res, error);
   }
-  const otp = Math.floor(1000 + Math.random() * 9000);
-
-  // Cache the OTP with a timestamp for expiration
-  otpCache[userName] = { otp, timestamp: Date.now() + 300000 };
-  await mobileOtp({ userName, otp });
-
-  res.status(200).json({ otp, message: "OTP sent successfully" });
 };
 
 exports.login = async (req, res) => {
   try {
     const { userName, password, otp } = req.body;
-
     const user = await findUserById({ userName });
     if (!user) {
       return res.status(400).json({ message: "Invalid user name" });
@@ -119,6 +120,7 @@ exports.login = async (req, res) => {
     const role = await findRoleById(userRole?.RoleId);
     if (role?.Name === "Patient") {
       const cachedOTP = otpCache[userName];
+
       if (
         !cachedOTP ||
         otp !== cachedOTP.otp ||
@@ -162,37 +164,33 @@ exports.login = async (req, res) => {
     };
     res.status(200).json({ loginData, message: "Login success" });
   } catch (error) {
-    res.status(500).json({ message: "An error occurred during login" });
+    errorResponseHandler(res, error);
   }
 };
 
 exports.changeUserPassword = async (req, res) => {
   try {
     const { userName, password } = req.body;
-    const user =await findUserById({ userName });
-    console.log(user);
+    const user = await findUserById({ userName });
     if (!user) {
       return res.status(400).json({ message: "user not found" });
     }
     const PasswordHash = await hashPasswordFunc(password);
-    
-    
+
     const result = await changeUserPassword(user?.Id, PasswordHash);
     return res
       .status(200)
       .json({ result, message: "Password change successfully" });
   } catch (error) {
-    console.log(error);
-    
+    errorResponseHandler(res, error);
   }
 };
 
 exports.appointment = async (req, res) => {
   try {
     const appoin = await getAllApointment();
-    console.log("-----------appointment-------------", appoin);
     res.status(200).json({ appoin, message: "appointment list" });
   } catch (error) {
-    console.log(error);
+    errorResponseHandler(res, error);
   }
 };

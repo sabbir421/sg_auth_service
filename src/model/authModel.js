@@ -82,8 +82,6 @@ const insertUser = async (userData) => {
 };
 
 const findUserById = async ({ userName }) => {
-  console.log("----------userName----------", userName);
-
   let pool;
   try {
     pool = await connectToDatabase();
