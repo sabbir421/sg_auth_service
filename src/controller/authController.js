@@ -32,7 +32,15 @@ exports.signup = async (req, res) => {
       lockoutEnd,
       role,
       password,
+      otp
     } = req.body;
+    if (
+        !cachedOTP ||
+        otp !== cachedOTP.otp ||
+        Date.now() > cachedOTP.timestamp
+      ) {
+        return res.status(400).json({ message: "Invalid OTP" });
+      }
     const PasswordHash = await hashPasswordFunc(password);
     const isUserExist = await findUserById({ email, userName });
     if (isUserExist) {
