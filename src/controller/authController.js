@@ -85,6 +85,8 @@ exports.signup = async (req, res) => {
     await userRoleSet(roleData);
    return res.status(200).json({ message: "Signup success" });
   } catch (err) {
+    console.log(err);
+    
     errorResponseHandler(res, err);
   }
 };
