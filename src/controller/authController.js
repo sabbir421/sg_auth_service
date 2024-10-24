@@ -45,7 +45,7 @@ exports.signup = async (req, res) => {
     const normalizedEmail = email.toUpperCase();
     const data = {
       Id,
-      tenantId,
+      tenantId:null,
       userName,
       name,
       surname,
@@ -83,7 +83,18 @@ exports.signup = async (req, res) => {
       TanentId: null,
     };
     await userRoleSet(roleData);
-   return res.status(200).json({ message: "Signup success" });
+    const userData={
+      userId: result?.Id,
+      userName:result?.UserName,
+      name: result?.Name,
+      email:result?.Email,
+      phoneNumber:result?.PhoneNumber,
+      isActive:result?.IsActive,
+      success:true,
+      message:"Signup success",
+    
+    }
+   return res.status(200).json({userData, message: "Signup success" });
   } catch (err) {
     console.log(err);
     
