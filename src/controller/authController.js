@@ -15,7 +15,7 @@ const {
 const { mobileOtp } = require("../utils/mobileOtpSend");
 const bcrypt = require("bcryptjs");
 const errorResponseHandler = require("../utils/errorResponseHandler");
-
+const otpCache = {};
 exports.signup = async (req, res) => {
   try {
     const {
@@ -110,7 +110,7 @@ exports.signup = async (req, res) => {
   }
 };
 
-const otpCache = {};
+
 
 exports.generateOtp = async (req, res) => {
   try {
@@ -118,9 +118,10 @@ exports.generateOtp = async (req, res) => {
     const otp = Math.floor(1000 + Math.random() * 9000);
     otpCache[userName] = { otp, timestamp: Date.now() + 300000 };
     await mobileOtp({ userName, otp });
-
     res.status(200).json({ otp, message: "OTP sent successfully" });
   } catch (error) {
+    console.log(error);
+    
     errorResponseHandler(res, error);
   }
 };
