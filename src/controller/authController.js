@@ -118,7 +118,18 @@ exports.signup = async (req, res) => {
 
 exports.generateOtp = async (req, res) => {
   try {
-    const { userName } = req.body;
+    const { userName,type } = req.body;
+    const user = await findUserById({userName})
+    if(type==="login"){
+      if(!user){
+       return res.status(404).json({ message: "Invalid user name" });
+      }
+    }
+    if(type==="signup"){
+      if(user){
+        return res.status(400).json({ message: "User already exist" });
+      }
+    }
     const otp = Math.floor(1000 + Math.random() * 9000);
     otpCache[userName] = { otp, timestamp: Date.now() + 300000 };
     await mobileOtp({ userName, otp });
@@ -186,6 +197,8 @@ exports.login = async (req, res) => {
     };
     res.status(200).json({ loginData, message: "Login success" });
   } catch (error) {
+    console.log("");
+    
     errorResponseHandler(res, error);
   }
 };
