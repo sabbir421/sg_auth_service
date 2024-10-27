@@ -115,10 +115,6 @@ const otpCache = {};
 exports.generateOtp = async (req, res) => {
   try {
     const { userName } = req.body;
-    const user = await findUserById({ userName });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid user name" });
-    }
     const otp = Math.floor(1000 + Math.random() * 9000);
     otpCache[userName] = { otp, timestamp: Date.now() + 300000 };
     await mobileOtp({ userName, otp });
