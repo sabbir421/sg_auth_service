@@ -35,14 +35,16 @@ exports.signup = async (req, res) => {
       otp
     } = req.body;
     const cachedOTP = otpCache[userName];
-
-    if (
-        !cachedOTP ||
-        otp !== cachedOTP.otp ||
-        Date.now() > cachedOTP.timestamp
-      ) {
-        return res.status(400).json({ message: "Invalid OTP" });
-      }
+ if(otp){
+  if (
+    !cachedOTP ||
+    otp !== cachedOTP.otp ||
+    Date.now() > cachedOTP.timestamp
+  ) {
+    return res.status(400).json({ message: "Invalid OTP" });
+  }
+ }
+   
     const PasswordHash = await hashPasswordFunc(password);
     const isUserExist = await findUserById({ email, userName });
     if (isUserExist) {
