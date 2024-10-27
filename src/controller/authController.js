@@ -34,6 +34,8 @@ exports.signup = async (req, res) => {
       password,
       otp
     } = req.body;
+    const cachedOTP = otpCache[userName];
+
     if (
         !cachedOTP ||
         otp !== cachedOTP.otp ||
