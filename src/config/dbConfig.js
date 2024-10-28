@@ -5,7 +5,7 @@ const config = {
   user: "sa",
   password: "Admin@123",
   server: "103.125.253.240",
-  database: "SG.Identity",
+  database: "SG_Test",
   options: {
     encrypt: true,
     trustServerCertificate: true,

@@ -17,6 +17,8 @@ const bcrypt = require("bcryptjs");
 const errorResponseHandler = require("../utils/errorResponseHandler");
 const otpCache = {};
 exports.signup = async (req, res) => {
+  console.log(req.body);
+
   try {
     const {
       tenantId,
@@ -34,6 +36,15 @@ exports.signup = async (req, res) => {
       password,
       otp,
     } = req.body;
+    let mobileotp=""
+    if (typeof otp === "string") {
+      mobileotp = parseInt(otp,10);
+    }
+    if(typeof otp==="number"){
+      mobileotp=otp
+    }
+    console.log("--------otp--------", mobileotp);
+
     const cachedOTP = otpCache[userName];
     if (otp) {
       if (
