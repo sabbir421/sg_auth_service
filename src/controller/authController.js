@@ -32,23 +32,25 @@ exports.signup = async (req, res) => {
       lockoutEnd,
       role,
       password,
-      otp
+      otp,
     } = req.body;
     const cachedOTP = otpCache[userName];
- if(otp){
-  if (
-    !cachedOTP ||
-    otp !== cachedOTP.otp ||
-    Date.now() > cachedOTP.timestamp
-  ) {
-    return res.status(400).json({ message: "Invalid OTP" });
-  }
- }
-   
+    if (otp) {
+      if (
+        !cachedOTP ||
+        otp !== cachedOTP.otp ||
+        Date.now() > cachedOTP.timestamp
+      ) {
+        return res.status(400).json({ message: "Invalid OTP" });
+      }
+    }
+
     const PasswordHash = await hashPasswordFunc(password);
     const isUserExist = await findUserById({ email, userName });
     if (isUserExist) {
-     return res.status(400).json({ message: "User already exist by user name" });
+      return res
+        .status(400)
+        .json({ message: "User already exist by user name" });
     }
 
     const Id = uuid();
@@ -57,7 +59,7 @@ exports.signup = async (req, res) => {
     const normalizedEmail = email.toUpperCase();
     const data = {
       Id,
-      tenantId:null,
+      tenantId: null,
       userName,
       name,
       surname,
@@ -88,45 +90,41 @@ exports.signup = async (req, res) => {
     };
     const result = await insertUser(data);
     const getRole = await findRole(role);
-
     const roleData = {
       UserId: Id,
       RoleId: getRole?.Id,
       TanentId: null,
     };
     await userRoleSet(roleData);
-    const userData={
+    const userData = {
       userId: result?.Id,
-      userName:result?.UserName,
+      userName: result?.UserName,
       name: result?.Name,
-      email:result?.Email,
-      phoneNumber:result?.PhoneNumber,
-      isActive:result?.IsActive,
-      success:true,
-      message:"Signup success",
-    
-    }
-   return res.status(200).json({userData, message: "Signup success" });
+      email: result?.Email,
+      phoneNumber: result?.PhoneNumber,
+      isActive: result?.IsActive,
+      success: true,
+      message: "Signup success",
+    };
+    return res.status(200).json({ userData, message: "Signup success" });
   } catch (err) {
     console.log(err);
-    
+
     errorResponseHandler(res, err);
   }
 };
 
-
-
 exports.generateOtp = async (req, res) => {
   try {
-    const { userName,type } = req.body;
-    const user = await findUserById({userName})
-    if(type==="login"){
-      if(!user){
-       return res.status(404).json({ message: "Invalid user name" });
+    const { userName, type } = req.body;
+    const user = await findUserById({ userName });
+    if (type === "login") {
+      if (!user) {
+        return res.status(404).json({ message: "Invalid user name" });
       }
     }
-    if(type==="signup"){
-      if(user){
+    if (type === "signup") {
+      if (user) {
         return res.status(400).json({ message: "User already exist" });
       }
     }
@@ -136,7 +134,7 @@ exports.generateOtp = async (req, res) => {
     res.status(200).json({ otp, message: "OTP sent successfully" });
   } catch (error) {
     console.log(error);
-    
+
     errorResponseHandler(res, error);
   }
 };
@@ -198,7 +196,7 @@ exports.login = async (req, res) => {
     res.status(200).json({ loginData, message: "Login success" });
   } catch (error) {
     console.log("");
-    
+
     errorResponseHandler(res, error);
   }
 };
