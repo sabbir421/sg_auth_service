@@ -9,68 +9,54 @@ const insertUser = async (userData) => {
 
     const query = `
     INSERT INTO dbo.AbpUsers (Id, TenantId, UserName, NormalizedUserName, Name, Surname, Email, NormalizedEmail, 
-    EmailConfirmed, PasswordHash, SecurityStamp, IsExternal, PhoneNumber, PhoneNumberConfirmed, IsActive,
-    TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount, ShouldChangePasswordOnNextLogin, 
-    EntityVersion, LastPasswordChangeTime, ExtraProperties, ConcurrencyStamp, CreationTime, CreatorId, 
-    LastModificationTime, LastModifierId, IsDeleted, DeleterId, DeletionTime)
+    EmailConfirmed, PasswordHash, SecurityStamp, IsExternal, PhoneNumber, PhoneNumberConfirmed, 
+    TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount, ExtraProperties, ConcurrencyStamp, CreationTime, CreatorId,LastModificationTime, LastModifierId, IsDeleted, DeleterId, DeletionTime)
     OUTPUT inserted.*
     VALUES (@Id, @TenantId, @UserName, @NormalizedUserName, @Name, @Surname, @Email, @NormalizedEmail, 
-    @EmailConfirmed, @PasswordHash, @SecurityStamp, @IsExternal, @PhoneNumber, @PhoneNumberConfirmed, @IsActive,
-    @TwoFactorEnabled, @LockoutEnd, @LockoutEnabled, @AccessFailedCount, @ShouldChangePasswordOnNextLogin, 
-    @EntityVersion, @LastPasswordChangeTime, @ExtraProperties, @ConcurrencyStamp, @CreationTime, @CreatorId, 
+    @EmailConfirmed, @PasswordHash, @SecurityStamp, @IsExternal, @PhoneNumber, @PhoneNumberConfirmed,
+    @TwoFactorEnabled, @LockoutEnd, @LockoutEnabled, @AccessFailedCount, 
+    @ExtraProperties, @ConcurrencyStamp, @CreationTime, @CreatorId, 
     @LastModificationTime, @LastModifierId, @IsDeleted, @DeleterId, @DeletionTime)
 `;
 
-const result = await pool
-    .request()
-    .input("Id", sql.UniqueIdentifier, userData.Id)
-    .input("TenantId", sql.UniqueIdentifier, userData.tenantId)
-    .input("UserName", sql.VarChar, userData.userName)
-    .input("NormalizedUserName", sql.VarChar, userData.normalizedUserName)
-    .input("Name", sql.VarChar, userData.name)
-    .input("Surname", sql.VarChar, userData.surname)
-    .input("Email", sql.VarChar, userData.email)
-    .input("NormalizedEmail", sql.VarChar, userData.normalizedEmail)
-    .input("EmailConfirmed", sql.Bit, userData.emailConfirmed)
-    .input("PasswordHash", sql.VarChar, userData.PasswordHash)
-    .input("SecurityStamp", sql.VarChar, userData.securityStamp)
-    .input("IsExternal", sql.Bit, userData.isExternal)
-    .input("PhoneNumber", sql.VarChar, userData.phoneNumber)
-    .input("PhoneNumberConfirmed", sql.Bit, userData.phoneNumberConfirmed)
-    .input("IsActive", sql.Bit, userData.isActive)
-    .input("TwoFactorEnabled", sql.Bit, userData.twoFactorEnabled)
-    .input("LockoutEnd", sql.DateTime, userData.lockoutEnd)
-    .input("LockoutEnabled", sql.Bit, userData.lockoutEnabled)
-    .input("AccessFailedCount", sql.Int, userData.accessFailedCount)
-    .input(
-      "ShouldChangePasswordOnNextLogin",
-      sql.Bit,
-      userData.shouldChangePasswordOnNextLogin
-    )
-    .input("EntityVersion", sql.Int, userData?.entityVersion || null)
-    // .input(
-    //   "LastPasswordChangeTime",
-    //   sql.DateTime,
-    //   userData.lastPasswordChangeTime
-    // )
-    .input("ExtraProperties", sql.VarChar, userData.extraProperties)
-    .input("ConcurrencyStamp", sql.VarChar, userData.concurrencyStamp)
-    .input("CreationTime", sql.DateTime, userData.creationTime)
-    .input("CreatorId", sql.UniqueIdentifier, userData.creatorId)
-    .input(
-      "LastModificationTime",
-      sql.DateTime,
-      userData.lastModificationTime
-    )
-    .input("LastModifierId", sql.UniqueIdentifier, userData.lastModifierId)
-    .input("IsDeleted", sql.Bit, userData.isDeleted)
-    .input("DeleterId", sql.UniqueIdentifier, userData.deleterId)
-    .input("DeletionTime", sql.DateTime, userData.deletionTime)
-    .query(query);
+    const result = await pool
+      .request()
+      .input("Id", sql.UniqueIdentifier, userData.Id)
+      .input("TenantId", sql.UniqueIdentifier, userData.tenantId)
+      .input("UserName", sql.VarChar, userData.userName)
+      .input("NormalizedUserName", sql.VarChar, userData.normalizedUserName)
+      .input("Name", sql.VarChar, userData.name)
+      .input("Surname", sql.VarChar, userData.surname)
+      .input("Email", sql.VarChar, userData.email)
+      .input("NormalizedEmail", sql.VarChar, userData.normalizedEmail)
+      .input("EmailConfirmed", sql.Bit, userData.emailConfirmed)
+      .input("PasswordHash", sql.VarChar, userData.PasswordHash)
+      .input("SecurityStamp", sql.VarChar, userData.securityStamp)
+      .input("IsExternal", sql.Bit, userData.isExternal)
+      .input("PhoneNumber", sql.VarChar, userData.phoneNumber)
+      .input("PhoneNumberConfirmed", sql.Bit, userData.phoneNumberConfirmed)
+      // .input("IsActive", sql.Bit, userData.isActive)
+      .input("TwoFactorEnabled", sql.Bit, userData.twoFactorEnabled)
+      .input("LockoutEnd", sql.DateTime, userData.lockoutEnd)
+      .input("LockoutEnabled", sql.Bit, userData.lockoutEnabled)
+      .input("AccessFailedCount", sql.Int, userData.accessFailedCount)
+      .input("ExtraProperties", sql.VarChar, userData.extraProperties)
+      .input("ConcurrencyStamp", sql.VarChar, userData.concurrencyStamp)
+      .input("CreationTime", sql.DateTime, userData.creationTime)
+      .input("CreatorId", sql.UniqueIdentifier, userData.creatorId)
+      .input(
+        "LastModificationTime",
+        sql.DateTime,
+        userData.lastModificationTime
+      )
+      .input("LastModifierId", sql.UniqueIdentifier, userData.lastModifierId)
+      .input("IsDeleted", sql.Bit, userData.isDeleted)
+      .input("DeleterId", sql.UniqueIdentifier, userData.deleterId)
+      .input("DeletionTime", sql.DateTime, userData.deletionTime)
+      .query(query);
 
-// Returning the inserted data
-return result.recordset[0];  // This returns the newly inserted user data
-
+    // Returning the inserted data
+    return result.recordset[0]; // This returns the newly inserted user data
   } catch (err) {
     console.error("Error inserting user:", err);
     throw err;
@@ -178,48 +164,48 @@ const getAllApointment = async () => {
   }
 };
 const findRoleById = async (roleId) => {
-    let pool;
-    try {
-      pool = await connectToDatabase();
-      let result = await pool.request().input("roleId", roleId).query(`
+  let pool;
+  try {
+    pool = await connectToDatabase();
+    let result = await pool.request().input("roleId", roleId).query(`
             SELECT TOP 1 * FROM dbo.AbpRoles
             WHERE  Id= @roleId
           `);
-  
-      // Directly return the first (and only) result if found
-      return result.recordset[0] || null; // Return null if no user found
-    } catch (error) {
-      console.error("error from role model", error);
-    }
-  };
 
-  const changeUserPassword = async (userId, PasswordHash) => {
-    let pool;
-    try {
-      pool = await connectToDatabase();
-      const query = `
+    // Directly return the first (and only) result if found
+    return result.recordset[0] || null; // Return null if no user found
+  } catch (error) {
+    console.error("error from role model", error);
+  }
+};
+
+const changeUserPassword = async (userId, PasswordHash) => {
+  let pool;
+  try {
+    pool = await connectToDatabase();
+    const query = `
         UPDATE dbo.AbpUsers
         SET PasswordHash = @PasswordHash
         WHERE Id = @userId
       `;
-  
-      const result = await pool
-        .request()
-        .input("userId", sql.UniqueIdentifier, userId)
-        .input("PasswordHash", sql.VarChar, PasswordHash)
-        .query(query);
-  
-      console.log("Password updated successfully");
-      return result.rowsAffected[0]; 
-    } catch (error) {
-      console.error("Error updating user password:", error);
-      throw error;
-    } finally {
-      if (pool) {
-        pool.close();
-      }
+
+    const result = await pool
+      .request()
+      .input("userId", sql.UniqueIdentifier, userId)
+      .input("PasswordHash", sql.VarChar, PasswordHash)
+      .query(query);
+
+    console.log("Password updated successfully");
+    return result.rowsAffected[0];
+  } catch (error) {
+    console.error("Error updating user password:", error);
+    throw error;
+  } finally {
+    if (pool) {
+      pool.close();
     }
-  };
+  }
+};
 
 module.exports = {
   insertUser,
@@ -229,5 +215,5 @@ module.exports = {
   getAllApointment,
   getUserRole,
   findRoleById,
-  changeUserPassword
+  changeUserPassword,
 };
