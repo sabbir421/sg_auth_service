@@ -47,6 +47,8 @@ exports.signup = async (req, res) => {
     console.log("--------otp--------", mobileotp);
 
     const cachedOTP = otpCache[userName];
+    console.log("----------cachedOTP----------",cachedOTP);
+    
     if (mobileotp) {
       if (
         !cachedOTP ||
@@ -76,11 +78,11 @@ exports.signup = async (req, res) => {
       name,
       surname,
       email,
-      emailConfirmed,
+      emailConfirmed:true,
       phoneNumber,
-      phoneNumberConfirmed,
+      phoneNumberConfirmed:true,
       twoFactorEnabled: false,
-      isActive,
+      isActive:true,
       isExternal: false,
       normalizedUserName,
       normalizedEmail,
@@ -92,7 +94,7 @@ exports.signup = async (req, res) => {
       concurrencyStamp: null,
       creationTime: new Date(),
       lastModificationTime: new Date(),
-      lockoutEnabled,
+      lockoutEnabled:true,
       lockoutEnd,
       role,
       accessFailedCount: false,
