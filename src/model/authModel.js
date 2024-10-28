@@ -48,11 +48,11 @@ const result = await pool
       userData.shouldChangePasswordOnNextLogin
     )
     .input("EntityVersion", sql.Int, userData?.entityVersion || null)
-    .input(
-      "LastPasswordChangeTime",
-      sql.DateTime,
-      userData.lastPasswordChangeTime
-    )
+    // .input(
+    //   "LastPasswordChangeTime",
+    //   sql.DateTime,
+    //   userData.lastPasswordChangeTime
+    // )
     .input("ExtraProperties", sql.VarChar, userData.extraProperties)
     .input("ConcurrencyStamp", sql.VarChar, userData.concurrencyStamp)
     .input("CreationTime", sql.DateTime, userData.creationTime)
