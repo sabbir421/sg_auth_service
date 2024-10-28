@@ -18,6 +18,7 @@ const errorResponseHandler = require("../utils/errorResponseHandler");
 const otpCache = {};
 exports.signup = async (req, res) => {
   try {
+    console.log(req.body)
     const {
       tenantId,
       userName,
