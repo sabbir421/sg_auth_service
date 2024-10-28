@@ -47,10 +47,10 @@ exports.signup = async (req, res) => {
     console.log("--------otp--------", mobileotp);
 
     const cachedOTP = otpCache[userName];
-    if (otp) {
+    if (mobileotp) {
       if (
         !cachedOTP ||
-        otp !== cachedOTP.otp ||
+        mobileotp !== cachedOTP.otp ||
         Date.now() > cachedOTP.timestamp
       ) {
         return res.status(400).json({ message: "Invalid OTP" });
